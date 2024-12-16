@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur SIS</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <script>
+        function parseInputArray(input) {
+            try {
+                return JSON.parse(input);
+            } catch {
+                // alert('Veuillez entrer les données sous forme de tableau valide, par exemple: [1, 2, 3]');
+                return null;
+            }
+        }
+
+        function flipArray(arr) {
+            return arr.slice().reverse();
+        }
+
+        function convolution(x, y) {
+            const result = Array(x.length + y.length - 1).fill(0);
+
+            for (let i = 0; i < x.length; i++) {
+                for (let j = 0; j < y.length; j++) {
+                    result[i + j] += x[i] * y[j];
+                }
+            }
+
+            return result;
+        }
+
+        // function calculateContinuousCorrelation() {
+        //     const xt = document.getElementById('xt').value;
+        //     const yt = document.getElementById('yt').value;
+
+        //     if (!xt || !yt) {
+        //         alert('Veuillez entrer les deux fonctions x(t) et y(t).');
+        //         return;
+        //     }
+
+        //     // Placeholder pour les calculs continus (à développer si nécessaire)
+        //     const rxy = `Rxy(t): Correlation entre ${xt} et ${yt}`;
+        //     const ryx = `Ryx(t): Correlation entre ${yt} et ${xt}`;
+        //     const rxx = `Rxx(t): Autocorrelation de ${xt}`;
+
+        //     document.getElementById('output-continuous').innerText = `${rxy}\n${ryx}\n${rxx}`;
+        // }
+
+        function calculateDiscreteCorrelation() {
+            const xnInput = document.getElementById('xn').value;
+            const ynInput = document.getElementById('yn').value;
+
+            const xn = parseInputArray(xnInput);
+            const yn = parseInputArray(ynInput);
+
+            if (!xn || !yn) return;
+
+            const rxy = convolution(flipArray(yn), xn);
+            const ryx = convolution(flipArray(xn), yn);
+            const rxx = convolution(flipArray(xn), xn);
+
+            document.getElementById('output-discrete').innerText = 
+                `Rxy[n] = [${rxy}]\nRyx[n] = [${ryx}]\nRxx[n] = [${rxx}]`;
+        }
+
+        function calculateDiscreteConvolution() {
+            const xnInput = document.getElementById('conv-xn').value;
+            const ynInput = document.getElementById('conv-yn').value;
+
+            const xn = parseInputArray(xnInput);
+            const yn = parseInputArray(ynInput);
+
+            if (!xn || !yn) return;
+
+            const conv = convolution(xn, yn);
+
+            document.getElementById('output-convolution').innerText = `x[n]*y[n] = [${conv}]`;
+        }
+    </script>
+</head>
+<body>
+
+    <!-- <section>
+        <h2>Corrélation en temps continu</h2>
+        <label for="xt">x(t): </label>
+        <input type="text" id="xt" placeholder="Entrez x(t)">
+        <label for="yt">y(t): </label>
+        <input type="text" id="yt" placeholder="Entrez y(t)">
+        <div class="button-container">
+            <a onclick="calculateContinuousCorrelation()">Calculer</a>
+        </div>
+        <pre id="output-continuous"></pre>
+    </section> -->
+
+    <section>
+        <h1>Corrélation en temps discret</h1>
+        <label for="xn">x[n]: </label>
+        <input type="text" id="xn" placeholder="Entrez x[n] au format [1, 2, 3]"><br>
+        <label for="yn">y[n]: </label>
+        <input type="text" id="yn" placeholder="Entrez y[n] au format [1, 2, 3]"><br>
+        <div class="button-container">
+            <a onclick="calculateDiscreteCorrelation()">Calculer</a>
+        </div>
+        <pre id="output-discrete"></pre>
+    </section>
+
+    <section>
+        <h1>Convolution en temps discret</h1>
+        <label for="conv-xn">x[n]: </label>
+        <input type="text" id="conv-xn" placeholder="Entrez x[n] au format [1, 2, 3]"><br>
+        <label for="conv-yn">y[n]: </label>
+        <input type="text" id="conv-yn" placeholder="Entrez y[n] au format [1, 2, 3]"><br>
+        <div class="button-container">
+            <a onclick="calculateDiscreteConvolution()">Calculer</a>
+        </div>
+        <pre id="output-convolution"></pre>
+    </section>
+
+    <section>
+        <h1>Téléchargement de scripts MATLAB</h1>
+        <h3>Script de calcul d'intercorrélation en temps continu</h3>
+        <div class="button-container">
+            <a href="intercorrelation_tc.m" class="download-btn" download>intercorrelation_tc.m</a>
+        </div>
+        <h3>Script de calcul de convolution en temps continu</h3>
+        <div class="button-container">
+            <a href="convolution_tc.m" class="download-btn" download>convolution_tc.m</a>
+        </div>
+    </section>
+
+</body>
+</html>
